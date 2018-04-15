@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Vector;
 
 public class DataRecorder {
@@ -19,7 +19,7 @@ public class DataRecorder {
 	 * 图片数据格式:
 	 * [[第一列],[第二列]...]
 	 */
-	public static void record(String path, Vector<OneSthMarker> markers,Image img) {
+	public static void record(String path, Vector<OneSthMarker> markers,Image img,boolean addData) {
 		//获取图像像素数据
 		BufferedImage bm = ImageReader.toBufferedImage(img);
 		int rgbArray[] = new int[img.getWidth(null)*img.getHeight(null)];
@@ -30,30 +30,34 @@ public class DataRecorder {
 		File file = new File(path);
 		try {
 			file.createNewFile();
-			OutputStream out=new FileOutputStream(file);
-			out.write(("{\n" +
-					"	\"things\":[").getBytes());
+			OutputStreamWriter out=new OutputStreamWriter(new FileOutputStream(file), "utf-8");
+			out.append("{\n" +
+					"	\"things\":[");
 			for(OneSthMarker marker:markers)
-				out.write(("{\"index\":"+String.valueOf(marker.index)+","+
+				out.append("{\"index\":"+String.valueOf(marker.index)+","+
 						"\"label\":\""+marker.label+"\","+
 						"\"x1\":"+String.valueOf(marker.x1)+","+
 						"\"y1\":"+String.valueOf(marker.y1)+","+
 						"\"x2\":"+String.valueOf(marker.x2)+","+
 						"\"y2\":"+String.valueOf(marker.y2)+"}"+ (markers.indexOf(marker)<markers.size()-1?",":"")
-						).getBytes());
-			out.write(("],\n"+
-					"	\"data\":[").getBytes());
-			for(Vector<PointDataRGB> vp:imageData) {
-				out.write("[".getBytes());
-				for(PointDataRGB p : vp) {
-					out.write(("["+String.valueOf(p.R)+","
-							+String.valueOf(p.G)+","+
-							String.valueOf(p.B)+"]"+(vp.indexOf(p)<vp.size()-1?",":"")).getBytes());
+						);
+			//append data start
+			if(addData) {
+				out.append("],\n"+
+						"	\"data\":[");
+				for(Vector<PointDataRGB> vp:imageData) {
+					out.append("[");
+					for(PointDataRGB p : vp) {
+						out.append("["+String.valueOf(p.R)+","
+								+String.valueOf(p.G)+","+
+								String.valueOf(p.B)+"]"+(vp.indexOf(p)<vp.size()-1?",":""));
+					}
+					out.append("]" + (imageData.indexOf(vp)<imageData.size()-1?",":""));
 				}
-				out.write(("]" + (imageData.indexOf(vp)<imageData.size()-1?",":"")).getBytes());
 			}
-			out.write(("]\n" + 
-			"}").getBytes());
+			//append data end
+			out.append("]\n" + 
+			"}");
 			out.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

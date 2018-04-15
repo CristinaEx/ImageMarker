@@ -3,7 +3,6 @@ package imagemarker;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
@@ -24,10 +23,10 @@ public class SthNumber {
 		this.file = new File(path + "\\" + SthNumber.FILENAME);
 		if(!this.file.exists())
 			try {
-				OutputStream out=new FileOutputStream(this.file);
-				out.write(("{\n" +
+				OutputStreamWriter out=new OutputStreamWriter(new FileOutputStream(this.file), "utf-8");
+				out.append(("{\n" +
 				"	\"sthToNumber\":{\"±³¾°\":-1}\n" + 
-						"}").getBytes());
+						"}"));
 				out.close();
 				file.createNewFile();
 			} catch (IOException e1) {
@@ -36,7 +35,7 @@ public class SthNumber {
 				return;
 			}
 	    try {
-			JSONObject objectMain = new JSONObject(FileUtils.readFileToString(file, "UTF-8"));
+			JSONObject objectMain = new JSONObject(FileUtils.readFileToString(file, "utf-8"));
 			objectMain = objectMain.getJSONObject("sthToNumber");
 			java.util.Iterator<String> it = objectMain.keys();  
 			while (it.hasNext()) {

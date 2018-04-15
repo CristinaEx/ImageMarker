@@ -27,7 +27,7 @@ public class ImageMarker {
 	 * "things":{"index":序列:{"label":"名字","x1":x1,"y1":y1,"x2":x2,"y2":y2},...},
 	 * "data":[[[图片数据]]]
 	 */
-	public void mark(Image img,String fileName) {
+	public void mark(Image img,String fileName,boolean addData) {
 		if(path == null)return;
 		if(markers.isEmpty())return;
 		for(OneSthMarker one : markers) {
@@ -42,7 +42,7 @@ public class ImageMarker {
 			//System.out.println(one.index);
 		}
 		File f = new File(fileName);
-		DataRecorder.record(path + "\\" + f.getName().substring(0, f.getName().lastIndexOf('.'))+".json", markers, img);
+		DataRecorder.record(path + "\\" + f.getName().substring(0, f.getName().lastIndexOf('.'))+".json", markers, img , addData);
 		this.book.reflashData();
 		this.clear();
 	}

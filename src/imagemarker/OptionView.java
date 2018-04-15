@@ -48,6 +48,10 @@ public class OptionView extends JPanel{
 	 */
 	public JCheckBox checkSearch;
 	/**
+	 * 检查是否添加图像数据
+	 */
+	public JCheckBox checkAddData;
+	/**
 	 * 计数当前读取的图片个数
 	 */
 	private JLabel picNumCounter;
@@ -200,13 +204,17 @@ public class OptionView extends JPanel{
 		this.add(this.checkSkip);
 		this.checkSkip.setVisible(true);
 		this.checkSkip.setBounds(0, 175, 180, 35);
+		this.checkAddData = new JCheckBox("记录图像数据",false);
+		this.add(this.checkAddData);
+		this.checkAddData.setVisible(true);
+		this.checkAddData.setBounds(0, 210, 180, 35);
 		/*
 		 * 包含框选的位置信息的JPanel
 		 */
 		JPanel positionData = new JPanel();
 		positionData.setLayout(new GridLayout(2,2));
 		positionData.setVisible(true);
-		positionData.setBounds(0, 210, 180, 70);
+		positionData.setBounds(0, 245, 180, 70);
 		this.add(positionData);
 		x1 = new InputTextField("x1:","");
 		y1 = new InputTextField("y1:","");
@@ -223,7 +231,7 @@ public class OptionView extends JPanel{
 		this.inputLabel = new InputTextField("label:","");
 		this.add(this.inputLabel);
 		this.inputLabel.setVisible(true);
-		this.inputLabel.setBounds(0, 280, 180, 35);
+		this.inputLabel.setBounds(0, 315, 180, 35);
 		this.inputLabel.input.addInputMethodListener(new InputMethodListener() {
 
 			@Override
@@ -241,11 +249,11 @@ public class OptionView extends JPanel{
 		this.inputIndex = new InputTextField("index:","");
 		this.add(this.inputIndex);
 		this.inputIndex.setVisible(true);
-		this.inputIndex.setBounds(0, 315, 180, 35);
+		this.inputIndex.setBounds(0, 350, 180, 35);
 		JButton addButton = new JButton("add");
 		this.add(addButton);
 		addButton.setVisible(true);
-		addButton.setBounds(0, 350, 180, 35);
+		addButton.setBounds(0, 385, 180, 35);
 		/*
 		 * add加入数据成功后把位置信息清空
 		 */
@@ -265,7 +273,12 @@ public class OptionView extends JPanel{
 				// TODO Auto-generated method stub
 				if(one != null) {
 					one.label = inputLabel.getText();
-					one.index = new Integer(inputIndex.getText()).intValue();
+					try {
+						one.index = new Integer(inputIndex.getText()).intValue();
+					}
+					catch(NumberFormatException ex) {
+						return;
+					}
 				}
 				else 
 					return;
@@ -287,7 +300,7 @@ public class OptionView extends JPanel{
 		JButton finishButton = new JButton("finish");
 		this.add(finishButton);
 		finishButton.setVisible(true);
-		finishButton.setBounds(0, 385, 180, 140);
+		finishButton.setBounds(0, 420, 180, 105);
 		finishButton.addMouseListener(new MouseListener() {
 
 			@Override
@@ -306,7 +319,7 @@ public class OptionView extends JPanel{
 				if(checkSearch.isSelected())
 					getSelectiveSearchResult(marker);
 				else 
-					marker.mark(parent.img,parent.fileNameList.get(picNumNow-1));
+					marker.mark(parent.img,parent.fileNameList.get(picNumNow-1),checkAddData.isSelected());
 				parent.clear();
 				clear();
 			}
@@ -545,7 +558,7 @@ public class OptionView extends JPanel{
 					//System.out.println(String.valueOf(one.y2));
 				}	
 				//System.out.println("over");
-				m.mark(parent.img,parent.fileNameList.get(picNumNow-1));
+				m.mark(parent.img,parent.fileNameList.get(picNumNow-1),checkAddData.isSelected());
 				m.clear();
 			}
 		});
